@@ -1,12 +1,29 @@
+const api = axios.create({
+    baseURL: 'https://api.themoviedb.org/3/',
+    header:{
+      'Content-Type':'application/json;charset=utf-8',
+    },
+    params: {
+        'api_key':API_KEY,
+        'language':'es',
+    },
+    
+});
+
+
 async function getTrendingMoviesPreview(){
+
+
+    /* CONSUME WITH FETCH
     const res   = await fetch('https://api.themoviedb.org/3/trending/movie/day?api_key='+API_KEY);
-
     const data  = await res.json();
-
     const movies = data.results;
+    */
+   /**CONSUME WITH AXIOS */
+   const response = await api('trending/movie/day'); 
+   const movies = response.data.results;
 
-
-    movies.forEach(movie => {
+   movies.forEach(movie => {
    
         //SELECT AND CREATING NODES
         const trendingPreviewMoviesContainer = document.querySelector('#trendingPreview .trendingPreview-movieList');
@@ -22,17 +39,21 @@ async function getTrendingMoviesPreview(){
         movieContainer.appendChild(movieImg);
         trendingPreviewMoviesContainer.appendChild(movieContainer);
     });
+
 }
 
 async function getCategoriesPreview(){
-    const res   = await fetch('https://api.themoviedb.org/3/genre/movie/list?api_key='+API_KEY+'&language=es');
 
-    const data  = await res.json();
+        /** CONSUME WITH FETCH 
+        const res   = await fetch('https://api.themoviedb.org/3/genre/movie/list?api_key='+API_KEY);
+        const data  = await res.json();
+        const categories = data.genres;
+        */
 
-    const categories = data.genres;
-
-
-    categories.forEach(category => {
+        /**CONSUME WITH AXIOS */
+        const response = await api('genre/movie/list'); 
+        const categories = response.data.genres;
+        categories.forEach(category => {
    
         //SELECT AND CREATING NODES
         const previewCategoryContainer = document.querySelector('#categoriesPreview .categoriesPreview-list');
@@ -47,8 +68,6 @@ async function getCategoriesPreview(){
         categoryTitle.appendChild(categoryTitleText );
         categoryContainer.appendChild(categoryTitle);
         previewCategoryContainer.appendChild(categoryContainer);
-
-    
     });
 }
 getTrendingMoviesPreview();
