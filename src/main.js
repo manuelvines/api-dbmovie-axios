@@ -14,22 +14,17 @@ const api = axios.create({
 async function getTrendingMoviesPreview(){
 
 
-    /* CONSUME WITH FETCH
-    const res   = await fetch('https://api.themoviedb.org/3/trending/movie/day?api_key='+API_KEY);
-    const data  = await res.json();
-    const movies = data.results;
-    */
    /**CONSUME WITH AXIOS */
    const response = await api('trending/movie/day'); 
    const movies = response.data.results;
 
+   trendingPreviewMoviesContainer.innerHTML = "";
    movies.forEach(movie => {
    
         //SELECT AND CREATING NODES
-        const trendingPreviewMoviesContainer = document.querySelector('#trendingPreview .trendingPreview-movieList');
         const movieContainer = document.createElement('div');
         const movieImg = document.createElement('img');
-
+        
         //CHANGES VALUES, ATRIBUTES, CLASES, ETC...
         movieContainer.classList.add('movie-container');
         movieImg.classList.add('movie-img');
@@ -44,31 +39,77 @@ async function getTrendingMoviesPreview(){
 
 async function getCategoriesPreview(){
 
-        /** CONSUME WITH FETCH 
-        const res   = await fetch('https://api.themoviedb.org/3/genre/movie/list?api_key='+API_KEY);
-        const data  = await res.json();
-        const categories = data.genres;
-        */
 
         /**CONSUME WITH AXIOS */
         const response = await api('genre/movie/list'); 
         const categories = response.data.genres;
+
+        previewCategoryContainer.innerHTML = "";
+
+
         categories.forEach(category => {
    
         //SELECT AND CREATING NODES
-        const previewCategoryContainer = document.querySelector('#categoriesPreview .categoriesPreview-list');
+        //const previewCategoryContainer = document.querySelector('#categoriesPreview .categoriesPreview-list');
         const categoryContainer        = document.createElement('div');
         const categoryTitle            = document.createElement('h3');
         const categoryTitleText        = document.createTextNode(category.name);
+
 
         //CHANGES VALUES, ATRIBUTES, CLASES, ETC...
         categoryContainer.classList.add('categoryContainer');
         categoryTitle.classList.add('category-title');
         categoryTitle.setAttribute('id','id' + category.id);
+
+        categoryTitle.addEventListener('click', () =>{
+
+         
+            //header-title.innerHTML =`PlatziMovies ${category.name}`;
+
+            location.hash = '#category='+category.id + '-' + category.name
+        });
+
         categoryTitle.appendChild(categoryTitleText );
         categoryContainer.appendChild(categoryTitle);
         previewCategoryContainer.appendChild(categoryContainer);
     });
+
 }
-getTrendingMoviesPreview();
-getCategoriesPreview();
+
+
+
+async function getMoviesByCategory(id){
+
+
+
+   /**CONSUME WITH AXIOS */
+   const response = await api('discover/movie',{
+    params:{
+      with_genres: id
+    },
+   }); 
+   const movies = response.data.results;
+
+   console.log(movies);
+
+
+   genericSection.innerHTML = "";
+
+   movies.forEach(movie => {
+   
+        //SELECT AND CREATING NODES
+        const movieContainer = document.createElement('div');
+        const movieImg = document.createElement('img');
+        
+        //CHANGES VALUES, ATRIBUTES, CLASES, ETC...
+        movieContainer.classList.add('movie-container');
+        movieImg.classList.add('movie-img');
+        movieImg.setAttribute('alt', movie.title);
+        movieImg.setAttribute('src',`https://image.tmdb.org/t/p/w300/${movie.poster_path}`);
+
+        movieContainer.appendChild(movieImg);
+        genericSection.appendChild(movieContainer);
+    });
+
+
+}
